@@ -1,0 +1,31 @@
+---
+# Digital World CrowdSec Observability Stack
+
+monitoring_base_dir: /opt/crowdsec-monitoring
+
+grafana_container_name: crowdsec-grafana
+prometheus_container_name: crowdsec-prometheus
+
+grafana_http_port: 3000
+prometheus_http_port: 9090
+
+grafana_admin_user: admin
+grafana_admin_password: ChangeMeNow123!
+
+prometheus_retention: 15d
+
+crowdsec_prometheus_host: 127.0.0.1
+crowdsec_prometheus_port: 6060
+
+crowdsec_insights_exporter_host: 127.0.0.1
+crowdsec_insights_exporter_port: 9791
+crowdsec_insights_exporter_limit: 1000
+crowdsec_insights_exporter_cache_seconds: 60
+
+node_exporter_port: 9100
+
+geoip_dir: "{{ monitoring_base_dir }}/geoip"
+geolite2_city_db: "{{ geoip_dir }}/GeoLite2-City.mmdb"
+geolite2_asn_db: "{{ geoip_dir }}/GeoLite2-ASN.mmdb"
+
+digital_world_logo_filename: digital-world-logo.png

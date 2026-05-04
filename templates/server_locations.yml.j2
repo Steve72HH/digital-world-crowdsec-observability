@@ -1,0 +1,13 @@
+---
+server_locations:
+{% for host in groups['crowdsec_all'] | default([]) %}
+{% if hostvars[host].monitoring_enabled | default(true) | bool %}
+  - instance: "{{ host }}"
+    display_name: "{{ host }}"
+    provider: "{{ hostvars[host].provider | default('Unknown') }}"
+    city: "{{ hostvars[host].city | default('Unknown') }}"
+    country: "{{ hostvars[host].country | default('Unknown') }}"
+    latitude: {{ hostvars[host].latitude | default(0) }}
+    longitude: {{ hostvars[host].longitude | default(0) }}
+{% endif %}
+{% endfor %}

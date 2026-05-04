@@ -1,0 +1,47 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "text",
+      "title": "Digital World Security Header",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "html",
+        "content": "<div style='display:flex;align-items:center;gap:24px;padding:10px 16px;min-height:92px;overflow:hidden;'><img src='/public/img/custom/digital-world-logo.png' style='display:block;max-width:300px;max-height:78px;width:auto;height:auto;object-fit:contain;' /><div><div style='font-size:28px;font-weight:800;'>Digital-World CrowdSec Security Board V4</div><div style='font-size:14px;opacity:0.9;margin-top:8px;'>Live Security Monitoring · CrowdSec Master · Agents · GeoIP · ASN · Server Health</div></div></div>"
+      }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [
+    "crowdsec",
+    "prometheus",
+    "grafana",
+    "digital-world"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "Digital World CrowdSec Security Board V4",
+  "uid": "digital-world-crowdsec-security-board-v4",
+  "version": 1,
+  "weekStart": ""
+}

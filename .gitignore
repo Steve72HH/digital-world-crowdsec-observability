@@ -1,0 +1,24 @@
+
+---
+
+```bash
+cat > .gitignore <<'EOF'
+*.retry
+*.log
+.env
+vault.yml
+*.bak
+*.backup
+*.broken
+*.tmp
+__pycache__/
+.DS_Store
+
+# Do not commit MaxMind databases
+*.mmdb
+
+# Do not commit Grafana/Prometheus runtime data
+data/
+grafana_data/
+prometheus_data/
+EOF

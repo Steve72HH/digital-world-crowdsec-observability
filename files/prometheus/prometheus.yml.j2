@@ -1,0 +1,38 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - "127.0.0.1:9090"
+
+  - job_name: crowdsec-master
+    static_configs:
+      - targets:
+          - "{{ crowdsec_prometheus_host }}:{{ crowdsec_prometheus_port }}"
+        labels:
+          instance: "master"
+
+  - job_name: crowdsec-insights-exporter
+    static_configs:
+      - targets:
+          - "{{ crowdsec_insights_exporter_host }}:{{ crowdsec_insights_exporter_port }}"
+        labels:
+          instance: "master"
+          role: "crowdsec-insights-exporter"
+
+  - job_name: node-exporter
+    static_configs:
+{% for host in groups['crowdsec_all'] | default([]) %}
+{% if hostvars[host].monitoring_enabled | default(true) | bool %}
+      - targets:
+          - "{{ hostvars[host].monitoring_scrape_host | default(hostvars[host].ansible_host) }}:{{ node_exporter_port }}"
+        labels:
+          instance: "{{ host }}"
+          provider: "{{ hostvars[host].provider | default('Unknown') }}"
+          city: "{{ hostvars[host].city | default('Unknown') }}"
+          country: "{{ hostvars[host].country | default('Unknown') }}"
+{% endif %}
+{% endfor %}

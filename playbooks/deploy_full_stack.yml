@@ -1,0 +1,79 @@
+---
+- name: Deploy Digital World CrowdSec Observability Stack
+  hosts: crowdsec_all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Placeholder - install and configure node exporter
+      ansible.builtin.debug:
+        msg: "TODO: Install prometheus-node-exporter and expose port 9100 safely."
+
+- name: Deploy monitoring stack on CrowdSec master
+  hosts: crowdsec_master
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Create monitoring directory structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ monitoring_base_dir }}"
+        - "{{ monitoring_base_dir }}/prometheus"
+        - "{{ monitoring_base_dir }}/grafana"
+        - "{{ monitoring_base_dir }}/grafana/dashboards"
+        - "{{ monitoring_base_dir }}/grafana/provisioning"
+        - "{{ monitoring_base_dir }}/grafana/provisioning/dashboards"
+        - "{{ monitoring_base_dir }}/grafana/provisioning/datasources"
+        - "{{ monitoring_base_dir }}/grafana/public/img/custom"
+        - "{{ monitoring_base_dir }}/exporters"
+        - "{{ monitoring_base_dir }}/geoip"
+
+    - name: Deploy server locations file
+      ansible.builtin.template:
+        src: ../templates/server_locations.yml.j2
+        dest: "{{ monitoring_base_dir }}/server_locations.yml"
+        mode: "0644"
+
+    - name: Deploy Prometheus configuration
+      ansible.builtin.template:
+        src: ../files/prometheus/prometheus.yml.j2
+        dest: "{{ monitoring_base_dir }}/prometheus/prometheus.yml"
+        mode: "0644"
+
+    - name: Deploy Docker Compose file
+      ansible.builtin.template:
+        src: ../templates/docker-compose.yml.j2
+        dest: "{{ monitoring_base_dir }}/docker-compose.yml"
+        mode: "0644"
+
+    - name: Deploy Grafana datasource provisioning
+      ansible.builtin.copy:
+        src: ../files/grafana/provisioning/datasources/prometheus.yml
+        dest: "{{ monitoring_base_dir }}/grafana/provisioning/datasources/prometheus.yml"
+        mode: "0644"
+
+    - name: Deploy Grafana dashboard provider
+      ansible.builtin.copy:
+        src: ../files/grafana/provisioning/dashboards/dashboards.yml
+        dest: "{{ monitoring_base_dir }}/grafana/provisioning/dashboards/dashboards.yml"
+        mode: "0644"
+
+    - name: Deploy Grafana dashboard
+      ansible.builtin.copy:
+        src: ../files/grafana/dashboards/digital-world-crowdsec-security-board-v4.json
+        dest: "{{ monitoring_base_dir }}/grafana/dashboards/digital-world-crowdsec-security-board-v4.json"
+        mode: "0644"
+
+    - name: Deploy CrowdSec insights exporter
+      ansible.builtin.copy:
+        src: ../files/exporters/crowdsec-insights-exporter.py
+        dest: /usr/local/bin/crowdsec-insights-exporter.py
+        mode: "0755"
+
+    - name: Placeholder - start Docker Compose stack
+      ansible.builtin.debug:
+        msg: "TODO: docker compose up -d from {{ monitoring_base_dir }}"
