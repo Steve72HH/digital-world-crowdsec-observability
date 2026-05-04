@@ -1,21 +1,146 @@
 ---
-- name: Deploy Digital World CrowdSec Observability Stack
+- name: Install and configure Node Exporter on CrowdSec servers
   hosts: crowdsec_all
   become: true
   gather_facts: true
 
   tasks:
-    - name: Placeholder - install and configure node exporter
-      ansible.builtin.debug:
-        msg: "TODO: Install prometheus-node-exporter and expose port 9100 safely."
+    - name: Skip disabled monitoring hosts
+      ansible.builtin.meta: end_host
+      when: not (monitoring_enabled | default(true) | bool)
 
-- name: Deploy monitoring stack on CrowdSec master
+    - name: Check whether prometheus-node-exporter package is installed
+      ansible.builtin.command: dpkg-query -W -f='${Status}' prometheus-node-exporter
+      register: node_exporter_pkg
+      changed_when: false
+      failed_when: false
+
+    - name: Install prometheus-node-exporter without apt cache update
+      ansible.builtin.apt:
+        name: prometheus-node-exporter
+        state: present
+        update_cache: false
+      register: node_exporter_install
+      failed_when: false
+      when: "'install ok installed' not in node_exporter_pkg.stdout"
+
+    - name: Show install warning if package installation failed
+      ansible.builtin.debug:
+        msg:
+          host: "{{ inventory_hostname }}"
+          warning: "prometheus-node-exporter package install failed. Existing exporter may still be running."
+          result: "{{ node_exporter_install.msg | default('no install attempted') }}"
+      when:
+        - node_exporter_install is defined
+        - node_exporter_install.failed | default(false)
+
+    - name: Check whether node exporter binary exists
+      ansible.builtin.shell: |
+        command -v prometheus-node-exporter || command -v node_exporter || true
+      register: node_exporter_binary
+      changed_when: false
+
+    - name: Reset failed node exporter service state
+      ansible.builtin.command: systemctl reset-failed prometheus-node-exporter
+      changed_when: false
+      failed_when: false
+
+    - name: Enable and restart prometheus-node-exporter if package service exists
+      ansible.builtin.systemd:
+        name: prometheus-node-exporter
+        enabled: true
+        state: restarted
+      register: node_exporter_service_restart
+      failed_when: false
+      when: node_exporter_binary.stdout | length > 0
+
+    - name: Check node exporter service status
+      ansible.builtin.command: systemctl is-active prometheus-node-exporter
+      register: node_exporter_status
+      changed_when: false
+      failed_when: false
+
+    - name: Check port 9100 listener
+      ansible.builtin.shell: ss -tulpen | grep ':{{ node_exporter_port }}' || true
+      register: node_exporter_port_check
+      changed_when: false
+
+    - name: Detect UFW
+      ansible.builtin.command: command -v ufw
+      register: ufw_check
+      changed_when: false
+      failed_when: false
+
+    - name: Allow Prometheus master to scrape node_exporter via UFW
+      ansible.builtin.command: >-
+        ufw allow from {{ hostvars[groups['crowdsec_master'][0]].ansible_host }}
+        to any port {{ node_exporter_port }} proto tcp
+      register: ufw_allow_node_exporter
+      changed_when: "'Rule added' in ufw_allow_node_exporter.stdout or 'Rules updated' in ufw_allow_node_exporter.stdout"
+      failed_when: false
+      when: ufw_check.rc == 0
+
+    - name: Show node exporter result
+      ansible.builtin.debug:
+        msg:
+          host: "{{ inventory_hostname }}"
+          package_installed_before: "{{ 'install ok installed' in node_exporter_pkg.stdout }}"
+          binary_found: "{{ node_exporter_binary.stdout | length > 0 }}"
+          service_status: "{{ node_exporter_status.stdout | default('unknown') }}"
+          port_check: "{{ node_exporter_port_check.stdout_lines }}"
+          scrape_url: "http://{{ monitoring_scrape_host | default(ansible_host) }}:{{ node_exporter_port }}/metrics"
+
+
+- name: Deploy Digital World CrowdSec Observability Stack on master
   hosts: crowdsec_master
   become: true
   gather_facts: true
 
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Restart CrowdSec insights exporter
+      ansible.builtin.systemd:
+        name: crowdsec-insights-exporter
+        state: restarted
+        enabled: true
+
+    - name: Recreate monitoring stack
+      ansible.builtin.command: docker compose up -d --remove-orphans
+      args:
+        chdir: "{{ monitoring_base_dir }}"
+      changed_when: true
+
   tasks:
-    - name: Create monitoring directory structure
+    - name: Check docker exists
+      ansible.builtin.command: docker --version
+      register: docker_check
+      changed_when: false
+      failed_when: docker_check.rc != 0
+
+    - name: Check docker compose exists
+      ansible.builtin.command: docker compose version
+      register: docker_compose_check
+      changed_when: false
+      failed_when: docker_compose_check.rc != 0
+
+    - name: Check cscli exists
+      ansible.builtin.command: cscli version
+      register: cscli_check
+      changed_when: false
+      failed_when: cscli_check.rc != 0
+
+    - name: Install Python GeoIP library if available
+      ansible.builtin.apt:
+        name: python3-geoip2
+        state: present
+        update_cache: false
+      register: python_geoip2_install
+      failed_when: false
+
+    - name: Create monitoring directories
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
@@ -37,43 +162,113 @@
         src: ../templates/server_locations.yml.j2
         dest: "{{ monitoring_base_dir }}/server_locations.yml"
         mode: "0644"
+      notify:
+        - Restart CrowdSec insights exporter
 
     - name: Deploy Prometheus configuration
       ansible.builtin.template:
         src: ../files/prometheus/prometheus.yml.j2
         dest: "{{ monitoring_base_dir }}/prometheus/prometheus.yml"
         mode: "0644"
+      notify:
+        - Recreate monitoring stack
 
     - name: Deploy Docker Compose file
       ansible.builtin.template:
         src: ../templates/docker-compose.yml.j2
         dest: "{{ monitoring_base_dir }}/docker-compose.yml"
         mode: "0644"
+      notify:
+        - Recreate monitoring stack
 
     - name: Deploy Grafana datasource provisioning
       ansible.builtin.copy:
         src: ../files/grafana/provisioning/datasources/prometheus.yml
         dest: "{{ monitoring_base_dir }}/grafana/provisioning/datasources/prometheus.yml"
         mode: "0644"
+      notify:
+        - Recreate monitoring stack
 
     - name: Deploy Grafana dashboard provider
       ansible.builtin.copy:
         src: ../files/grafana/provisioning/dashboards/dashboards.yml
         dest: "{{ monitoring_base_dir }}/grafana/provisioning/dashboards/dashboards.yml"
         mode: "0644"
+      notify:
+        - Recreate monitoring stack
 
-    - name: Deploy Grafana dashboard
+    - name: Deploy Grafana dashboard V4
       ansible.builtin.copy:
         src: ../files/grafana/dashboards/digital-world-crowdsec-security-board-v4.json
         dest: "{{ monitoring_base_dir }}/grafana/dashboards/digital-world-crowdsec-security-board-v4.json"
         mode: "0644"
+      notify:
+        - Recreate monitoring stack
 
-    - name: Deploy CrowdSec insights exporter
+    - name: Deploy CrowdSec insights exporter script
       ansible.builtin.copy:
         src: ../files/exporters/crowdsec-insights-exporter.py
         dest: /usr/local/bin/crowdsec-insights-exporter.py
         mode: "0755"
+      notify:
+        - Restart CrowdSec insights exporter
 
-    - name: Placeholder - start Docker Compose stack
+    - name: Deploy CrowdSec insights exporter systemd service
+      ansible.builtin.template:
+        src: ../files/systemd/crowdsec-insights-exporter.service.j2
+        dest: /etc/systemd/system/crowdsec-insights-exporter.service
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart CrowdSec insights exporter
+
+    - name: Flush handlers before checks
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start CrowdSec insights exporter
+      ansible.builtin.systemd:
+        name: crowdsec-insights-exporter
+        enabled: true
+        state: started
+
+    - name: Bring up monitoring stack
+      ansible.builtin.command: docker compose up -d --remove-orphans
+      args:
+        chdir: "{{ monitoring_base_dir }}"
+      changed_when: false
+
+    - name: Wait for CrowdSec insights exporter
+      ansible.builtin.uri:
+        url: "http://{{ crowdsec_insights_exporter_host }}:{{ crowdsec_insights_exporter_port }}/metrics"
+        status_code: 200
+      register: exporter_health
+      retries: 20
+      delay: 3
+      until: exporter_health.status == 200
+
+    - name: Wait for Prometheus
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ prometheus_http_port }}/-/healthy"
+        status_code: 200
+      register: prometheus_health
+      retries: 20
+      delay: 3
+      until: prometheus_health.status == 200
+
+    - name: Wait for Grafana
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ grafana_http_port }}/api/health"
+        status_code: 200
+      register: grafana_health
+      retries: 20
+      delay: 3
+      until: grafana_health.status == 200
+
+    - name: Show final status
       ansible.builtin.debug:
-        msg: "TODO: docker compose up -d from {{ monitoring_base_dir }}"
+        msg:
+          exporter_url_local: "http://127.0.0.1:{{ crowdsec_insights_exporter_port }}/metrics"
+          prometheus_url_local: "http://127.0.0.1:{{ prometheus_http_port }}"
+          grafana_url: "http://{{ ansible_host }}:{{ grafana_http_port }}"
+          geoip_city_db_expected: "{{ geolite2_city_db }}"
+          geoip_asn_db_expected: "{{ geolite2_asn_db }}"

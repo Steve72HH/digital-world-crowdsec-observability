@@ -1,0 +1,23 @@
+[Unit]
+Description=CrowdSec Insights Exporter for Prometheus
+After=network-online.target crowdsec.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/bin/python3 /usr/local/bin/crowdsec-insights-exporter.py \
+  --listen {{ crowdsec_insights_exporter_host }} \
+  --port {{ crowdsec_insights_exporter_port }} \
+  --limit {{ crowdsec_insights_exporter_limit }} \
+  --cache-seconds {{ crowdsec_insights_exporter_cache_seconds }} \
+  --city-db {{ geolite2_city_db }} \
+  --asn-db {{ geolite2_asn_db }} \
+  --server-locations {{ monitoring_base_dir }}/server_locations.yml
+Restart=always
+RestartSec=5
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target
