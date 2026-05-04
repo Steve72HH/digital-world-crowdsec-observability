@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="assets/digital-world-logo.png" alt="Digital World Logo" width="320">
+</p>
+
+
 # Digital World CrowdSec Observability Stack
 
 A production-ready Prometheus/Grafana/CrowdSec observability stack for monitoring CrowdSec masters, agents, attacks, ASN/provider data, GeoIP attack origins and server health.
