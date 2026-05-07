@@ -11,81 +11,21 @@
     {
       "id": 1,
       "type": "text",
-      "title": "Digital World Public Threat Observatory Header",
+      "title": "Header",
       "gridPos": {
-        "h": 4,
-        "w": 24,
         "x": 0,
-        "y": 0
+        "y": 0,
+        "w": 24,
+        "h": 4
       },
       "options": {
         "mode": "html",
-        "content": "<div style=\"display:flex;align-items:center;justify-content:space-between;width:100%;height:100%;padding:8px 18px;background:linear-gradient(90deg,#050816,#111827,#050816);border-radius:14px;border:1px solid rgba(34,211,238,.35);box-shadow:0 0 22px rgba(34,211,238,.18);\"><div><div style=\"font-size:28px;font-weight:800;color:#e5faff;letter-spacing:.5px;\">Digital World Live Threat Observatory</div><div style=\"font-size:14px;color:#9ca3af;margin-top:4px;\">Live CrowdSec telemetry · attack trends · scenarios · GeoIP · ASN/provider intelligence</div></div><div style=\"font-size:13px;color:#22d3ee;text-align:right;\">PUBLIC KIOSK<br/>sanitized view</div></div>"
-      }
+        "content": "\n<div style=\"\n  display:flex;\n  align-items:center;\n  justify-content:space-between;\n  width:100%;\n  height:100%;\n  box-sizing:border-box;\n  padding:10px 18px;\n  background:linear-gradient(90deg,#020617 0%, #071226 45%, #020617 100%);\n  border:1px solid rgba(34,211,238,.30);\n  border-radius:10px;\n  overflow:hidden;\n\">\n  <div style=\"display:flex;align-items:center;gap:16px;min-width:0;\">\n    <img src=\"/public/img/custom/digital-world-logo.png\" alt=\"Digital World Logo\"\n         style=\"height:58px;width:auto;display:block;border-radius:6px;box-shadow:0 0 14px rgba(34,211,238,.18);\" />\n    <div style=\"min-width:0;\">\n      <div style=\"\n        font-size:30px;\n        line-height:1.08;\n        font-weight:900;\n        color:#f8fafc;\n        white-space:nowrap;\n        overflow:hidden;\n        text-overflow:ellipsis;\n        margin-bottom:6px;\n      \">\n        Digital World Live Threat Observatory\n      </div>\n      <div style=\"\n        font-size:14px;\n        color:#a5b4c3;\n        white-space:nowrap;\n        overflow:hidden;\n        text-overflow:ellipsis;\n      \">\n        Live CrowdSec telemetry · attack trends · scenarios · GeoIP · ASN/provider intelligence\n      </div>\n    </div>\n  </div>\n\n  <div style=\"\n    flex:0 0 auto;\n    text-align:right;\n    font-size:12px;\n    line-height:1.3;\n    color:#22d3ee;\n    font-weight:800;\n    letter-spacing:.04em;\n    margin-left:14px;\n  \">\n    PUBLIC KIOSK<br>REFRESH 30s\n  </div>\n</div>\n"
+      },
+      "transparent": true
     },
     {
       "id": 2,
-      "type": "stat",
-      "title": "Monitored Servers",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 4
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(count(up{job=\"node-exporter\"}))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": []
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 4,
       "type": "stat",
       "title": "Attacks last 5m",
       "datasource": {
@@ -93,10 +33,10 @@
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 4,
+        "x": 0,
+        "y": 4,
         "w": 4,
-        "x": 8,
-        "y": 4
+        "h": 3
       },
       "targets": [
         {
@@ -121,7 +61,127 @@
           "fields": ""
         },
         "orientation": "auto",
-        "textMode": "value",
+        "textMode": "auto",
+        "wideLayout": true,
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "showPercentChange": false
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Attacks last 15m",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 4,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "crowdsec_recent_alerts_15m_total",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "wideLayout": true,
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "showPercentChange": false
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Attacks last 60m",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 4,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "crowdsec_recent_alerts_60m_total",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "orientation": "auto",
+        "textMode": "auto",
         "wideLayout": true,
         "colorMode": "background",
         "graphMode": "none",
@@ -147,16 +207,16 @@
     {
       "id": 5,
       "type": "stat",
-      "title": "Attacks last 15m",
+      "title": "Events Loaded",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
         "x": 12,
-        "y": 4
+        "y": 4,
+        "w": 4,
+        "h": 3
       },
       "targets": [
         {
@@ -165,7 +225,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "crowdsec_recent_alerts_15m_total",
+          "expr": "crowdsec_insights_exporter_alerts_loaded",
           "instant": true,
           "range": false,
           "refId": "A",
@@ -181,7 +241,7 @@
           "fields": ""
         },
         "orientation": "auto",
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true,
         "colorMode": "background",
         "graphMode": "none",
@@ -207,16 +267,16 @@
     {
       "id": 6,
       "type": "stat",
-      "title": "Attacks last 60m",
+      "title": "Telemetry",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
         "x": 16,
-        "y": 4
+        "y": 4,
+        "w": 4,
+        "h": 3
       },
       "targets": [
         {
@@ -225,7 +285,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "crowdsec_recent_alerts_60m_total",
+          "expr": "crowdsec_insights_exporter_up",
           "instant": true,
           "range": false,
           "refId": "A",
@@ -241,7 +301,7 @@
           "fields": ""
         },
         "orientation": "auto",
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true,
         "colorMode": "background",
         "graphMode": "none",
@@ -267,16 +327,16 @@
     {
       "id": 7,
       "type": "stat",
-      "title": "Exporter Loaded",
+      "title": "Parsed Events",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
         "x": 20,
-        "y": 4
+        "y": 4,
+        "w": 4,
+        "h": 3
       },
       "targets": [
         {
@@ -285,7 +345,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "crowdsec_insights_exporter_alerts_loaded",
+          "expr": "crowdsec_insights_exporter_alert_timestamps_parsed",
           "instant": true,
           "range": false,
           "refId": "A",
@@ -301,7 +361,7 @@
           "fields": ""
         },
         "orientation": "auto",
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true,
         "colorMode": "background",
         "graphMode": "none",
@@ -327,16 +387,16 @@
     {
       "id": 8,
       "type": "stat",
-      "title": "GeoIP City DB",
+      "title": "GeoIP City",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 9,
-        "w": 8,
         "x": 0,
-        "y": 8
+        "y": 7,
+        "w": 3,
+        "h": 2
       },
       "targets": [
         {
@@ -352,14 +412,14 @@
       ],
       "options": {
         "reduceOptions": {
+          "values": false,
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
+          "fields": ""
         },
         "orientation": "auto",
-        "textMode": "value",
+        "textMode": "auto",
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
@@ -400,16 +460,16 @@
     {
       "id": 9,
       "type": "stat",
-      "title": "GeoIP ASN DB",
+      "title": "GeoIP ASN",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 8
+        "x": 3,
+        "y": 7,
+        "w": 3,
+        "h": 2
       },
       "targets": [
         {
@@ -425,14 +485,14 @@
       ],
       "options": {
         "reduceOptions": {
+          "values": false,
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
+          "fields": ""
         },
         "orientation": "auto",
-        "textMode": "value",
+        "textMode": "auto",
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
@@ -472,1075 +532,6 @@
     },
     {
       "id": 10,
-      "type": "stat",
-      "title": "Exporter UP",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 8
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "crowdsec_insights_exporter_up",
-          "instant": true,
-          "range": false,
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "wideLayout": true,
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "showPercentChange": false
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 11,
-      "type": "stat",
-      "title": "Timestamps Parsed",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 8
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "crowdsec_insights_exporter_alert_timestamps_parsed",
-          "instant": true,
-          "range": false,
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "wideLayout": true,
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "showPercentChange": false
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 20,
-      "type": "stat",
-      "title": "master",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 12
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"master\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 21,
-      "type": "stat",
-      "title": "node1",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 12
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node1\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 22,
-      "type": "stat",
-      "title": "node2",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 12
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node2\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 23,
-      "type": "stat",
-      "title": "node3",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 21
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node3\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 24,
-      "type": "stat",
-      "title": "node4",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 21
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node4\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 25,
-      "type": "stat",
-      "title": "node5",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 21
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node5\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 26,
-      "type": "stat",
-      "title": "node6",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 30
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node6\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 27,
-      "type": "stat",
-      "title": "node7",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 30
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node7\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 28,
-      "type": "stat",
-      "title": "node8",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 30
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node8\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 29,
-      "type": "stat",
-      "title": "node9",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 39
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node9\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 30,
-      "type": "stat",
-      "title": "node10",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 39
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node10\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 31,
-      "type": "stat",
-      "title": "node11",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 39
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node11\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 32,
-      "type": "stat",
-      "title": "node12",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 48
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "scalar(max(up{job=\"node-exporter\",instance=\"node12\"}) or vector(0))",
-          "instant": true,
-          "format": "time_series"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value",
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "wideLayout": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN"
-                },
-                "1": {
-                  "text": "UP"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 40,
       "type": "timeseries",
       "title": "Live Attack Curve",
       "datasource": {
@@ -1548,10 +539,10 @@
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 48
+        "x": 6,
+        "y": 7,
+        "w": 18,
+        "h": 7
       },
       "targets": [
         {
@@ -1614,18 +605,18 @@
       }
     },
     {
-      "id": 41,
+      "id": 11,
       "type": "bargauge",
-      "title": "Attack Scenarios last 15m",
+      "title": "Active Attack Scenarios",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 9,
-        "w": 8,
         "x": 0,
-        "y": 57
+        "y": 9,
+        "w": 6,
+        "h": 5
       },
       "targets": [
         {
@@ -1685,7 +676,7 @@
       "transformations": []
     },
     {
-      "id": 51,
+      "id": 12,
       "type": "geomap",
       "title": "Global Attack Origins",
       "datasource": {
@@ -1693,10 +684,10 @@
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 12,
+        "x": 0,
+        "y": 14,
         "w": 12,
-        "x": 8,
-        "y": 57
+        "h": 8
       },
       "targets": [
         {
@@ -1787,7 +778,7 @@
       }
     },
     {
-      "id": 52,
+      "id": 13,
       "type": "geomap",
       "title": "ASN / Provider Origins",
       "datasource": {
@@ -1795,10 +786,10 @@
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 12,
+        "x": 12,
+        "y": 14,
         "w": 12,
-        "x": 20,
-        "y": 57
+        "h": 8
       },
       "targets": [
         {
@@ -1889,18 +880,116 @@
       }
     },
     {
-      "id": 61,
+      "id": 14,
       "type": "table",
-      "title": "Top 10 AS / Provider",
+      "title": "Top Attack Scenarios",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 9,
-        "w": 8,
         "x": 0,
-        "y": 69
+        "y": 22,
+        "w": 12,
+        "h": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "topk(10, crowdsec_top_scenario_events)",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "countRows": false,
+          "fields": ""
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "role": true,
+              "exported_instance": true,
+              "source_ip": true,
+              "machine": true,
+              "provider": true,
+              "city": true,
+              "country": true,
+              "display_name": true,
+              "latitude": true,
+              "longitude": true
+            },
+            "indexByName": {
+              "scenario": 0,
+              "Value": 1
+            },
+            "renameByName": {
+              "scenario": "Scenario",
+              "Value": "Events"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "table",
+      "title": "Top ASN / Provider",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 22,
+        "w": 12,
+        "h": 6
       },
       "targets": [
         {
@@ -1988,104 +1077,6 @@
           }
         }
       ]
-    },
-    {
-      "id": 62,
-      "type": "table",
-      "title": "Top 10 Attack Scenarios",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 69
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "topk(10, crowdsec_top_scenario_events)",
-          "instant": true,
-          "range": false,
-          "refId": "A",
-          "format": "table"
-        }
-      ],
-      "options": {
-        "showHeader": true,
-        "cellHeight": "sm",
-        "footer": {
-          "show": false,
-          "reducer": [
-            "sum"
-          ],
-          "countRows": false,
-          "fields": ""
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "__name__": true,
-              "instance": true,
-              "job": true,
-              "role": true,
-              "exported_instance": true,
-              "source_ip": true,
-              "machine": true,
-              "provider": true,
-              "city": true,
-              "country": true,
-              "display_name": true,
-              "latitude": true,
-              "longitude": true
-            },
-            "indexByName": {
-              "scenario": 0,
-              "Value": 1
-            },
-            "renameByName": {
-              "scenario": "Scenario",
-              "Value": "Events"
-            }
-          }
-        }
-      ]
     }
   ],
   "refresh": "30s",
@@ -2106,7 +1097,7 @@
     "to": "now"
   },
   "timezone": "browser",
-  "title": "Digital World Threat Observatory Public V1",
+  "title": "Digital World Live Threat Observatory",
   "uid": "dw-threat-public-v1",
   "version": 1,
   "weekStart": ""

@@ -53,11 +53,63 @@ services:
     networks:
       - monitoring
 
+{% if grafana_public_enabled | default(false) | bool %}
+  grafana-public:
+    image: grafana/grafana:latest
+    container_name: crowdsec-grafana-public
+    restart: unless-stopped
+
+    environment:
+      GF_SECURITY_ADMIN_USER: "{{ grafana_public_admin_user }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_public_admin_password }}"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
+      GF_AUTH_DISABLE_LOGIN_FORM: "false"
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_SERVER_ROOT_URL: "https://{{ grafana_public_domain }}"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+      GF_LOG_LEVEL: "info"
+
+    ports:
+      - "{{ grafana_public_bind_address }}:{{ grafana_public_http_port }}:3000"
+
+    volumes:
+      - grafana_public_data:/var/lib/grafana
+      - ./grafana-public/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana-public/dashboards:/var/lib/grafana/dashboards:ro
+      - ./grafana/public/img/custom:/usr/share/grafana/public/img/custom:ro
+
+    depends_on:
+      - prometheus
+
+    networks:
+      - monitoring
+      - proxy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network={{ traefik_proxy_network }}"
+      - "traefik.http.routers.threats.rule=Host(`{{ grafana_public_domain }}`)"
+      - "traefik.http.routers.threats.entrypoints=websecure"
+      - "traefik.http.routers.threats.tls=true"
+      - "traefik.http.routers.threats.tls.certresolver={{ traefik_certresolver }}"
+      - "traefik.http.services.threats.loadbalancer.server.port=3000"
+{% endif %}
+
+
 networks:
   monitoring:
     name: crowdsec-monitoring
     driver: bridge
+  proxy:
+    external: true
+    name: {{ traefik_proxy_network }}
 
 volumes:
   prometheus_data:
   grafana_data:
+  grafana_public_data:

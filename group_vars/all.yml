@@ -1,31 +1,39 @@
 ---
-# Digital World CrowdSec Observability Stack
-
 monitoring_base_dir: /opt/crowdsec-monitoring
 
-grafana_container_name: crowdsec-grafana
-prometheus_container_name: crowdsec-prometheus
-
 grafana_http_port: 3000
-prometheus_http_port: 9090
-
 grafana_admin_user: admin
-grafana_admin_password: ChangeMeNow123!
+grafana_admin_password: "F2912@hh72"
 
-prometheus_retention: 15d
-
-crowdsec_prometheus_host: 127.0.0.1
-crowdsec_prometheus_port: 6060
-
-crowdsec_insights_exporter_host: 127.0.0.1
-crowdsec_insights_exporter_port: 9791
-crowdsec_insights_exporter_limit: 1000
-crowdsec_insights_exporter_cache_seconds: 60
+prometheus_http_port: 9090
+prometheus_retention_time: 15d
 
 node_exporter_port: 9100
 
-geoip_dir: "{{ monitoring_base_dir }}/geoip"
-geolite2_city_db: "{{ geoip_dir }}/GeoLite2-City.mmdb"
-geolite2_asn_db: "{{ geoip_dir }}/GeoLite2-ASN.mmdb"
+# CrowdSec native Prometheus metrics
+crowdsec_metrics_host: "0.0.0.0"
+crowdsec_metrics_port: 6060
 
-digital_world_logo_filename: digital-world-logo.png
+# Digital World CrowdSec Insights Exporter
+crowdsec_insights_exporter_host: "0.0.0.0"
+crowdsec_insights_exporter_port: 9791
+crowdsec_insights_exporter_limit: 100
+crowdsec_insights_exporter_cache_seconds: 900
+
+# GeoIP databases on the CrowdSec master
+geolite2_city_db: /opt/crowdsec-monitoring/geoip/GeoLite2-City.mmdb
+geolite2_asn_db: /opt/crowdsec-monitoring/geoip/GeoLite2-ASN.mmdb
+
+# Public/Kiosk Grafana
+grafana_public_enabled: true
+grafana_public_domain: "threats.digital-world.dev"
+grafana_public_admin_user: "admin"
+grafana_public_admin_password: "F2912@hh72"
+grafana_public_http_port: 3001
+
+# Traefik integration
+traefik_proxy_network: "proxy"
+traefik_certresolver: "myresolver"
+
+# Public Grafana bind address
+grafana_public_bind_address: "0.0.0.0"
